@@ -620,10 +620,19 @@ function displayNextPage(){
     const normalPrice = Number((card["店頭価格"]||'0').replace(/[¥,\s]/g,'')) || 0;
 
     
-    const priceDisplay = showImages
-      ? isZero ? (card["グレイアウト発動時専用"]||'DMで確認') 
-               : `<span class="price-store">買取価格</span><br><span class="price-store">¥${normalPrice.toLocaleString()}</span>
-               : `<span class="price-store-inline">買取価格 ¥${normalPrice.toLocaleString()}</span> 
+  const priceDisplay = showImages
+  ? (
+      isZero
+        ? (card["グレイアウト発動時専用"] || 'DMで確認')
+        : `<span class="price-store">買取価格</span><br>
+           <span class="price-store">¥${normalPrice.toLocaleString()}</span>`
+    )
+  : (
+      isZero
+        ? (card["グレイアウト発動時専用"] || 'DMで確認')
+        : `<span class="price-store-inline">買取価格 ¥${normalPrice.toLocaleString()}</span>`
+    );
+
 
     const div = document.createElement('div');
     div.className = `card ${grayClass} ${!showImages ? 'no-image' : ''}`;
