@@ -494,7 +494,8 @@ img.lazy.loaded { filter: none; }
 <button id="loadMoreButton">こちらをタップして、さらにカードを読み込む</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-<script>const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT753ZwAyAqWj5WIi51Gd9Qnv45s-TmB0v9sMvVBe3Tj6QjYOVasVC8K8HtgYtSxEOXD7KV_iUCA9ac/pub?gid=839074683&single=true&output=csv';
+<script>
+const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT753ZwAyAqWj5WIi51Gd9Qnv45s-TmB0v9sMvVBe3Tj6QjYOVasVC8K8HtgYtSxEOXD7KV_iUCA9ac/pub?gid=839074683&single=true&output=csv';
 
 let cards = [];
 let filteredCards = [];
@@ -585,6 +586,7 @@ cards = parsed.data.map(card=>({
   "分類2": card["分類2"],   // ← 新しく追加
   "募集枚数": card["募集枚数"],
   "店頭価格": card["店頭価格"],
+  "郵送価格": card["郵送価格"],
   "画像URL": card["画像URL"],
   "グレイアウト発動時専用": card["グレイアウト発動時専用"]
 }));
@@ -617,21 +619,13 @@ function displayNextPage(){
     const isZero = (card["募集枚数"]||"").trim() === "0枚募集中";
     const grayClass = isZero ? 'gray-out' : '';
     const normalPrice = Number((card["店頭価格"]||'0').replace(/[¥,\s]/g,'')) || 0;
-
+    const foilPrice = Number((card["郵送価格"]||'0').replace(/[¥,\s]/g,'')) || 0;
     
-  const priceDisplay = showImages
-  ? (
-      isZero
-        ? (card["グレイアウト発動時専用"] || 'DMで確認')
-        : `<span class="price-store">買取価格</span><br>
-           <span class="price-store">¥${normalPrice.toLocaleString()}</span>`
-    )
-  : (
-      isZero
-        ? (card["グレイアウト発動時専用"] || 'DMで確認')
-        : `<span class="price-store-inline">買取価格 ¥${normalPrice.toLocaleString()}</span>`
-    );
-
+    const priceDisplay = showImages
+      ? isZero ? (card["グレイアウト発動時専用"]||'DMで確認') 
+               : `<span class="price-store">店頭買取価格</span><br><span class="price-store">¥${normalPrice.toLocaleString()}</span><br><span class="price-mail">郵送買取価格</span><br><span class="price-mail">¥${foilPrice.toLocaleString()}</span>`
+      : isZero ? (card["グレイアウト発動時専用"]||'DMで確認') 
+               : `<span class="price-store-inline">店頭買取価格 ¥${normalPrice.toLocaleString()}</span> / <span class="price-mail-inline">郵送買取価格 ¥${foilPrice.toLocaleString()}</span>`;
 
     const div = document.createElement('div');
     div.className = `card ${grayClass} ${!showImages ? 'no-image' : ''}`;
@@ -716,3 +710,4 @@ fetchCsvData();
 </script>
 </body>
 </html>
+
